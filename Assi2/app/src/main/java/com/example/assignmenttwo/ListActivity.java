@@ -23,7 +23,7 @@ public class ListActivity extends AppCompatActivity {
     //start with basic manual entries for testing
     Card card1 = new Card(1,"img_card_1.png");
     Card card2 = new Card(2, "img_card_2.png");
-    ArrayList<Card> cardList = new ArrayList<>(Arrays.asList(card1, card2));
+    ArrayList<Card> cards = new ArrayList<>(Arrays.asList(card1, card2));
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +31,7 @@ public class ListActivity extends AppCompatActivity {
 
         //update listview
         ListView listView = (ListView) findViewById(R.id.cardList);
-        CustomAdapter adapterCustom = new CustomAdapter(this, cardList);
+        CustomAdapter adapterCustom = new CustomAdapter(this, cards);
         listView.setAdapter(adapterCustom);
     }
 
