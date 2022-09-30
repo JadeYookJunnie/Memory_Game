@@ -29,17 +29,10 @@ import java.util.Random;
 
 public class ListActivity extends AppCompatActivity {
 
-    //generate random list of cards
-    //start with basic manual entries for testing
-//    com.example.assignmenttwo.Card card1 = new com.example.assignmenttwo.Card(1,"img_card_1");
-//    com.example.assignmenttwo.Card card2 = new com.example.assignmenttwo.Card(2, "img_card_2");
-    //ArrayList<com.example.assignmenttwo.Card> cards = new ArrayList<>(Arrays.asList(card1, card2));
 
+    //get the instance of the game information
     GameInfo instance = GameInfo.getInstance();
-    //Card fpick = instance.getFirstPick();
-    //String first = instance.setFirst(new Card(9, "img"));
     Card card = new Card(9, "img");
-    //instance.setFirst(card);
 
 
 
@@ -50,6 +43,7 @@ public class ListActivity extends AppCompatActivity {
     ListView listView;
 
 
+    //on creation of the list...
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,40 +51,55 @@ public class ListActivity extends AppCompatActivity {
 
         //update listview
         listView = (ListView) findViewById(R.id.cardList);
-        CustomAdapter adapterCustom = new CustomAdapter(this, instance.getList());
+        CustomAdapter adapterCustom;
+        //create adapter using list stored in game instance
+        adapterCustom = new CustomAdapter(this, instance.getList());
         listView.setAdapter(adapterCustom);
+        //when an item is clicked
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Card selected = instance.getList().get(position);
+                //if the card has not been selected
+                if(selected.flipped == false) {
 
 
-                //get first click, check if null
-                //if so, set card to first click
-                //if not, second pick
-                //check match (second pick)
-                //if match, change first and second to match
 
-                //open intent with selection
 
-                Intent intent = (new Intent(ListActivity.this, CardActivity.class));
 
-                String up = selected.faceUp;
-                intent.putExtra("status", getStatus(selected));
-                intent.putExtra("match", selected.matched);
-                intent.putExtra("face", up);
-                startActivity(intent);
+
+                    //create card intent
+                    Intent intent = (new Intent(ListActivity.this, CardActivity.class));
+
+                    //pass through matching status and image name
+                    String up = selected.faceUp;
+                    intent.putExtra("status", getStatus(selected));
+                    intent.putExtra("face", up);
+                    //open intent with selection
+                    startActivity(intent);
+
+                }
+                //change flipped status as to not be selected again
+                instance.getList().get(position).flipped = true;
+                //adapterCustom.refresh();
+
+
+
 
             }
         });
     }
 
     public String getStatus(Card selected) {
+        //has the first of the two been chosen?
+        //if not, set card to first click
         if(instance.getFirstPick() == null) {
             instance.setFirst(selected);
             return "First Pick!";
         }
+        //if so, set to second pick
         else  {
+            //give response depending on first and second match
             instance.setSecond(selected);
             if(checkMatch()) {
                 reset();
@@ -103,11 +112,13 @@ public class ListActivity extends AppCompatActivity {
         }
     }
 
+    //change first and second to null
     public void reset() {
         instance.setFirst(null);
         instance.setSecond(null);
     }
 
+    //check iof first and second selection match
     public boolean checkMatch() {
         if(instance.getFirstPick().faceUp == instance.getSecondPick().faceUp) {
             return true;
@@ -118,11 +129,11 @@ public class ListActivity extends AppCompatActivity {
     }
 
     //@RequiresApi(api = Build.VERSION_CODES.N)
+    //generate list of cards
     public ArrayList<Card> generate() {
         ArrayList<Card> Cardlist = new ArrayList<>();
-//        String[] names = {"img_card_1", "img_card_1", "img_card_2", "img_card_2",
-//                "img_card_3", "img_card_3", "img_card_4", "img_card_4", "img_card_5",
-//                "img_card_5", "img_card_6", "img_card_6"};
+
+        //create list containing all card sources
         ArrayList<String> names = new ArrayList<>();
 
         names.add("img_card_1");
@@ -139,7 +150,9 @@ public class ListActivity extends AppCompatActivity {
         names.add("img_card_6");
 
 //        ArrayList<Integer> indexes = new ArrayList<Integer>();
+        //randomise
         Collections.shuffle(names);
+        //give nmumber to each, add to new list
         for (int i = 1; i <= 5; i++) {
             Cardlist.add(new Card(i, names.get(i)));
         }
@@ -149,26 +162,16 @@ public class ListActivity extends AppCompatActivity {
     }
 
 
-//    public class com.example.assignmenttwo.Card {
-//        public int number;
-//        public String faceUp;
-//        public String faceDown;
-//        public boolean match;
-//
-//        public com.example.assignmenttwo.Card(int number, String faceUp) {
-//            this.number = number;
-//            this.faceUp = faceUp;
-//            faceDown = "img_card_facedown.png";
-//            match = false;
-//
-//
-//        }
 
 
     //customadapter
+    //could not make new class
     public class CustomAdapter extends ArrayAdapter<Card> {
         Context context;
         ArrayList<Card> cards;
+        Card current;
+        ImageView imageView;
+        TextView textView;
 //        GameInfo instance = GameInfo.getInstance();
 
         //Card card = instance.getFirstPick();
@@ -184,25 +187,39 @@ public class ListActivity extends AppCompatActivity {
         //test2
 
         public View getView(int position, View convertView, ViewGroup parent) {
-            Card current = cards.get(position);
+            //for each card...
+            current = cards.get(position);
 
+            //populate each item in the list
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.row_listview, parent, false);
-            ImageView imageView = (ImageView) convertView.findViewById(R.id.rowImg);
-            TextView textView = (TextView) convertView.findViewById(R.id.rowText);
-//             int id = getContext().getResources().getIdentifier(current.faceUp, "drawable", getContext().getPackageName());
-//             imageView.setImageResource(id);
-            String up = current.faceUp;
-            int id = context.getResources().getIdentifier(up, "drawable", context.getPackageName());
+            imageView = (ImageView) convertView.findViewById(R.id.rowImg);
+            textView = (TextView) convertView.findViewById(R.id.rowText);
 
 
-//            Drawable drawable = context.getDrawable(id);
-////
-//            imageView.setBackground(drawable);
-            imageView.setImageResource(id);
+            //attempt to change image based on flipped status
+            //could not refresh so didn't completely work
+            if(current.flipped == true) {
+                String up = current.faceUp;
+                int id = context.getResources().getIdentifier(up, "drawable", context.getPackageName());
+                imageView.setImageResource(id);
+            }
+            else {
+                String down = current.faceDown;
+                int id = context.getResources().getIdentifier(down, "drawable", context.getPackageName());
+                imageView.setImageResource(id);
+            }
+             int id = getContext().getResources().getIdentifier(current.faceUp, "drawable", getContext().getPackageName());
+             imageView.setImageResource(id);
+
+
+            //finalise display
             textView.setText("card " + current.number);
             return convertView;
         }
+
+
+
     }
 }
 

@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //activate list activity on start
     public void activateList(View v) {
         Button button = findViewById(R.id.startButton);
         Intent intent = new Intent(this, ListActivity.class);

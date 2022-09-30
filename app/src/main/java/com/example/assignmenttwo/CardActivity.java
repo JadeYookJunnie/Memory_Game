@@ -22,22 +22,21 @@ public class CardActivity extends AppCompatActivity {
         Context context = this;
 
 
+        //get assed valyes
         Intent intent = getIntent();
 
         boolean match = intent.getBooleanExtra("match", false);
         String stat = intent.getStringExtra("status");
         String name = intent.getStringExtra("face");
 
+        //set image of the card
         ImageView card = (ImageView) findViewById(R.id.cardImg);
-
         Resources resource = this.getResources();
         String pack = this.getPackageName();
         int id = resource.getIdentifier(name, "drawable", pack);
-        //int img_id = context.getResources().getIdentifier(name, "drawable",context.getPackageName());
-//        Drawable drawable = this.getDrawable(img_id);
-//        card.setBackground(drawable);
         card.setImageResource(id);
 
+        //set matching status
         TextView status = (TextView) findViewById(R.id.matchText);
         status.setText(stat);
 
