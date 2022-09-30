@@ -1,8 +1,11 @@
 package com.example.assignmentone;
 
 import androidx.appcompat.app.AppCompatActivity;
-
+import android.view.View;
+import android.content.Intent;
 import android.os.Bundle;
+
+import com.example.assignmenttwo.R;
 
 public class MainActivity extends AppCompatActivity {
 

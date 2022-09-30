@@ -6,14 +6,18 @@ import androidx.core.content.res.ResourcesCompat;
 
 import java.lang.reflect.Array;
 import java.util.*;
+
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.content.Context;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -31,7 +35,20 @@ public class ListActivity extends AppCompatActivity {
 //    com.example.assignmenttwo.Card card2 = new com.example.assignmenttwo.Card(2, "img_card_2");
     //ArrayList<com.example.assignmenttwo.Card> cards = new ArrayList<>(Arrays.asList(card1, card2));
 
-    ArrayList<Card> cards = generate();
+    GameInfo instance = GameInfo.getInstance();
+    //Card fpick = instance.getFirstPick();
+    //String first = instance.setFirst(new Card(9, "img"));
+    Card card = new Card(9, "img");
+    //instance.setFirst(card);
+
+
+
+
+
+    //ArrayList<Card> cards = generate();
+    String gen = instance.setCards(generate());
+    ListView listView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +56,65 @@ public class ListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list);
 
         //update listview
-        ListView listView = (ListView) findViewById(R.id.cardList);
-        CustomAdapter adapterCustom = new CustomAdapter(this, cards);
+        listView = (ListView) findViewById(R.id.cardList);
+        CustomAdapter adapterCustom = new CustomAdapter(this, instance.getList());
         listView.setAdapter(adapterCustom);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Card selected = instance.getList().get(position);
+
+
+                //get first click, check if null
+                //if so, set card to first click
+                //if not, second pick
+                //check match (second pick)
+                //if match, change first and second to match
+
+                //open intent with selection
+
+                Intent intent = (new Intent(ListActivity.this, CardActivity.class));
+
+                String up = selected.faceUp;
+                intent.putExtra("status", getStatus(selected));
+                intent.putExtra("match", selected.matched);
+                intent.putExtra("face", up);
+                startActivity(intent);
+
+            }
+        });
+    }
+
+    public String getStatus(Card selected) {
+        if(instance.getFirstPick() == null) {
+            instance.setFirst(selected);
+            return "First Pick!";
+        }
+        else  {
+            instance.setSecond(selected);
+            if(checkMatch()) {
+                reset();
+                return "Second pick...it's a match!";
+            }
+            else {
+                reset();
+                return "Second pick... whoops, it's not a match";
+            }
+        }
+    }
+
+    public void reset() {
+        instance.setFirst(null);
+        instance.setSecond(null);
+    }
+
+    public boolean checkMatch() {
+        if(instance.getFirstPick().faceUp == instance.getSecondPick().faceUp) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     //@RequiresApi(api = Build.VERSION_CODES.N)
@@ -96,6 +169,11 @@ public class ListActivity extends AppCompatActivity {
     public class CustomAdapter extends ArrayAdapter<Card> {
         Context context;
         ArrayList<Card> cards;
+//        GameInfo instance = GameInfo.getInstance();
+
+        //Card card = instance.getFirstPick();
+        //String first = instance.setFirst(new Card(9, "first"));
+
 
         public CustomAdapter(Context context, ArrayList<Card> cards) {
             super(context, R.layout.row_listview, cards);
@@ -116,10 +194,12 @@ public class ListActivity extends AppCompatActivity {
 //             imageView.setImageResource(id);
             String up = current.faceUp;
             int id = context.getResources().getIdentifier(up, "drawable", context.getPackageName());
-            //error here
-            Drawable drawable = context.getDrawable(id);
-//
-            imageView.setBackground(drawable);
+
+
+//            Drawable drawable = context.getDrawable(id);
+////
+//            imageView.setBackground(drawable);
+            imageView.setImageResource(id);
             textView.setText("card " + current.number);
             return convertView;
         }
