@@ -49,18 +49,7 @@ public class ListActivity extends AppCompatActivity {
 //                "img_card_3", "img_card_3", "img_card_4", "img_card_4", "img_card_5",
 //                "img_card_5", "img_card_6", "img_card_6"};
         ArrayList<String> names = new ArrayList<>();
-//        Cardlist.add(new Card("img_card_1"));
-//        Cardlist.add(new Card("img_card_1"));
-//        Cardlist.add(new Card("img_card_2"));
-//        Cardlist.add(new Card("img_card_2"));
-//        Cardlist.add(new Card("img_card_3"));
-//        Cardlist.add(new Card("img_card_3"));
-//        Cardlist.add(new Card("img_card_4"));
-//        Cardlist.add(new Card("img_card_4"));
-//        Cardlist.add(new Card("img_card_5"));
-//        Cardlist.add(new Card("img_card_5"));
-//        Cardlist.add(new Card("img_card_6"));
-//        Cardlist.add(new Card("img_card_6"));
+
         names.add("img_card_1");
         names.add("img_card_1");
         names.add("img_card_2");
@@ -132,5 +121,48 @@ public class ListActivity extends AppCompatActivity {
              textView.setText("card " + current.number);
              return convertView;
          }
+    }
+
+    public class GameInfo {
+        private static GameInfo instance = null;
+        private Card firstPick;
+        private Card secondPick;
+        private ArrayList<Card> cardArrayList = generate();
+
+        private GameInfo() {
+
+        }
+
+        public static GameInfo getInstance() {
+            if(instance==null) {
+                instance = new GameInfo();
+            }
+            return instance;
+        }
+
+        public ArrayList<Card> generate() {
+            ArrayList<Card> Cardlist = new ArrayList<>();
+            ArrayList<String> names = new ArrayList<>();
+
+            names.add("img_card_1");
+            names.add("img_card_1");
+            names.add("img_card_2");
+            names.add("img_card_2");
+            names.add("img_card_3");
+            names.add("img_card_3");
+            names.add("img_card_4");
+            names.add("img_card_4");
+            names.add("img_card_5");
+            names.add("img_card_5");
+            names.add("img_card_6");
+            names.add("img_card_6");
+
+            Collections.shuffle(names);
+            for(int i = 1; i <= 5; i++) {
+                Cardlist.add(new Card(i, names.get(i)));
+            }
+            return Cardlist;
+
+        }
     }
 }
