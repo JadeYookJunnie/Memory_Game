@@ -102,6 +102,7 @@ public class ListActivity extends AppCompatActivity {
             this.context = context;
             this.cards = cards;
         }
+        //test
 
         public View getView(int position, View convertView, ViewGroup parent) {
             Card current = cards.get(position);
